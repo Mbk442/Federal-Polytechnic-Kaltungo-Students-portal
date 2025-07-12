@@ -1,0 +1,115 @@
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+
+export default function StudentPortal() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [studentData, setStudentData] = useState(null);
+  const [formData, setFormData] = useState({ username: "", password: "" });
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (formData.username === "student" && formData.password === "password123") {
+      setStudentData({
+        name: "Aliyu Musa",
+        regNumber: "FPK/EEE/21/0001",
+        courses: ["Electrical Circuits", "Digital Electronics", "Mathematics I"],
+        results: { "Mathematics I": "B", "Electrical Circuits": "A", "Digital Electronics": "C" },
+        fees: "Paid"
+      });
+      setIsAuthenticated(true);
+    } else {
+      alert("Incorrect username or password");
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <Card className="w-full max-w-md p-4">
+          <CardContent>
+            <h1 className="text-xl font-bold mb-4">Federal Polytechnic Kaltungo Student Portal</h1>
+            <form onSubmit={handleLogin} className="space-y-3">
+              <Input name="username" placeholder="Username" onChange={handleChange} required />
+              <Input name="password" type="password" placeholder="Password" onChange={handleChange} required />
+              <Button type="submit" className="w-full">Login</Button>
+            </form>
+            <p className="mt-4 text-center text-sm">New student? <a href="#" className="text-blue-600">Register Here</a></p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <header className="p-4 bg-blue-700 text-white text-center">Federal Polytechnic Kaltungo Student Dashboard</header>
+      <main className="p-4 max-w-4xl mx-auto">
+        <Tabs defaultValue="profile">
+          <TabsList className="flex space-x-2">
+            <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="bio">Bio Data</TabsTrigger>
+            <TabsTrigger value="courses">Course Registration</TabsTrigger>
+            <TabsTrigger value="results">Semester Results</TabsTrigger>
+            <TabsTrigger value="fees">School Fees</TabsTrigger>
+          </TabsList>
+          <TabsContent value="profile">
+            <Card className="mt-4">
+              <CardContent>
+                <h2 className="font-bold">Profile Information</h2>
+                <p>Name: {studentData.name}</p>
+                <p>Reg Number: {studentData.regNumber}</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="bio">
+            <Card className="mt-4">
+              <CardContent>
+                <h2 className="font-bold">Bio Data</h2>
+                <p>Date of Birth: 01/01/2002</p>
+                <p>Department: Electrical/Electronics Engineering</p>
+                <p>Level: ND II</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="courses">
+            <Card className="mt-4">
+              <CardContent>
+                <h2 className="font-bold">Registered Courses</h2>
+                <ul className="list-disc list-inside">
+                  {studentData.courses.map(course => <li key={course}>{course}</li>)}
+                </ul>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="results">
+            <Card className="mt-4">
+              <CardContent>
+                <h2 className="font-bold">Semester Results</h2>
+                <ul className="list-disc list-inside">
+                  {Object.entries(studentData.results).map(([course, grade]) => (
+                    <li key={course}>{course}: {grade}</li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="fees">
+            <Card className="mt-4">
+              <CardContent>
+                <h2 className="font-bold">School Fees Payment</h2>
+                <p>Status: {studentData.fees}</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </main>
+    </div>
+  );
+}
